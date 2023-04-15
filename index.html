@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" type="image/png" href="images/leaf.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bloom</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+   <div class="search_container">
+    <div class="logo">
+       <a href="index.html">Bloom<img src="https://i.imgur.com/SpeM9nH.png"></a>
+     </div>
+     <div class="menu">
+        <select id="plantType">
+          <option value="Indoor" selected>Indoor</option>
+          <option value="Outdoor">Outdoor</option>
+          <option value="Flowering">Flowering</option>
+        </select>
+      </div> 
+    <form action="" class="search_bar">
+      <input class="search_input" type="text" placeholder="Search">
+      <button class="search_button" type="button" id="searchButton"><img src="images/search.png"></button>
+    </form>
+  </div>
+  
+  <div class="banner" >
+    <div class="banner-text">
+      <h1>Welcome to the Plant Haven.</h1>
+    </div>
+  </div>
+ 
+  <div class="pin_container" id="pinContainer">
+
+  </div>
+  
+
+  
+  <script>
+      
+      fetch('https://perenual.com/api/species-list?key=sk-RV5d6436fd2dc031a499&indoor=1')
+        .then(response => response.json())
+        .then(data => {
+          const initialData = data.data;
+          renderPlants(initialData);
+        })
+        .catch(error => console.error(error));
+      
+      
+      const selectEl = document.querySelector('select');
+      
+      selectEl.addEventListener('change', () => {
+        const selectedValue = selectEl.value;
+  
+        console.log(selectedValue);
+  
+        if (selectedValue === "Indoor") {
+          fetch(`https://perenual.com/api/species-list?key=sk-RV5d6436fd2dc031a499&${selectedValue.toLowerCase()}=1`)
+            .then(response => response.json())
+            .then(data => {
+              const filteredData = data.data;
+              renderPlants(filteredData);
+            })
+            .catch(error => console.error(error));
+        }
+        
+        if (selectedValue === "Outdoor") {
+          fetch(`https://perenual.com/api/species-list?key=sk-RV5d6436fd2dc031a499&${selectedValue.toLowerCase()}=1`)
+            .then(response => response.json())
+            .then(data => {
+              const filteredData = data.data;
+              renderPlants(filteredData);
+            })
+            .catch(error => console.error(error));
+        }
+  
+        if (selectedValue === "Flowering") {
+          renderPlantsFlowering();
+        }
+      });
+      
+      function renderPlants(data){
+        
+        const pinContainer = document.getElementById('pinContainer');
+  
+        const cards = document.querySelectorAll("#pinContainer .card");
+        
+        cards.forEach(card => {
+          card.remove();
+        });
+        
+        count=0;
+        data.forEach(item => {
+            if (count >= 15) {
+              return;
+            }
+          
+            const card = document.createElement("div");
+            card.classList.add("card", "card_medium", "clickable");
+    
+            const image = document.createElement("img");
+            image.src = item.default_image.small_url;
+            image.classList.add("card-image");
+    
+            const title = document.createElement("h2");
+            title.textContent = item.common_name;
+
+            const plantId = item.id; 
+            card.setAttribute("id", plantId); 
+          
+            card.appendChild(image);
+            card.appendChild(title);
+    
+            pinContainer.appendChild(card);
+            
+            console.log(item.id);
+            console.log(card.id);
+            console.log(item.common_name);
+            console.log(item.scientific_name);
+            console.log(item.default_image.regular_url);
+
+            card.addEventListener("click", function() {
+              window.location.href = "overview.html?id=" + item.id; 
+            });
+          
+            count++;
+        })
+      } 
+  
+      function renderPlantsFlowering(){
+          
+      	const pinContainer = document.getElementById('pinContainer');
+      
+      	const cards = document.querySelectorAll("#pinContainer .card");
+      
+      	cards.forEach(card => {
+      	  card.remove();
+      	});
+      
+      	for(let i=1;i<31;i++){
+      
+      	  fetch(`https://perenual.com/api/species/details/${i}?key=sk-RV5d6436fd2dc031a499`)
+      		.then(response => response.json())
+      		.then(data => {
+      
+            if(data.flowers){
+              const card = document.createElement("div");
+              card.classList.add("card", "card_medium", "clickable");
+          
+              const image = document.createElement("img");
+              image.src = data.default_image.small_url;
+              image.classList.add("card-image");
+          
+              const title = document.createElement("h2");
+              title.textContent = data.common_name;
+
+              const plantId = data.id; 
+              card.setAttribute("id", plantId); 
+              
+              card.appendChild(image);
+              card.appendChild(title);
+          
+              pinContainer.appendChild(card);
+
+              card.addEventListener("click", function() {
+                window.location.href = "overview.html?id=" + data.id; 
+              });
+                
+              console.log(data.id);
+              console.log(data.common_name);
+              console.log(data.scientific_name);
+              console.log(data.other_name);
+              console.log(data.default_image.regular_url);
+            }
+        })
+        .catch(error => console.error(error));
+      	  
+      	}
+      }
+      
+      const greetings = ["Good Morning", "Good Afternoon","Good Evening"];
+      const currentHour= new Date().getHours();
+      
+       let index= currentHour >= 12 && currentHour < 
+       17 ? 1 : currentHour >= 17 ? 2 : 0;
+      
+       console.log(greetings[index]);
+
+    function searchPlants(query) {
+
+  const pinContainer = document.getElementById('pinContainer');
+  const cards = document.querySelectorAll("#pinContainer .card");
+  
+  cards.forEach(card => {
+    card.remove();
+  });
+  found = false;
+
+ fetch('https://perenual.com/api/species-list?page=1&key=sk-RV5d6436fd2dc031a499')
+  .then(response => response.json())
+  .then(data => {
+    const searchData = data.data;
+    
+    console.log("search function called");
+    console.log(searchData);
+    searchData.forEach(item => {
+
+      console.log(item.common_name);
+      if(item.common_name.toLowerCase()===query.toLowerCase()){
+        found=true;
+        const card = document.createElement("div");
+        card.classList.add("card", "card_medium", "clickable");
+
+        const image = document.createElement("img");
+        image.src = item.default_image.small_url;
+        image.classList.add("card-image");
+
+          const title = document.createElement("h2");
+        title.textContent = item.common_name;
+
+        const plantId = item.id; 
+        card.setAttribute("id", plantId); 
+      
+        card.appendChild(image);
+        card.appendChild(title);
+
+        pinContainer.appendChild(card);
+
+        card.addEventListener("click", function() {
+          window.location.href = "overview.html?id=" + item.id; 
+        });
+
+          console.log(item.id);
+        console.log(card.id);
+        console.log(item.common_name);
+        console.log(item.scientific_name);
+        console.log(item.default_image.regular_url);
+
+      }
+
+    });
+
+    if (!found) {
+        const noResult = document.createElement("div");
+        noResult.textContent = "No results found.";
+        pinContainer.appendChild(noResult);
+      }
+  })
+
+      .catch(error => console.error(error));
+
+}
+
+const searchButton = document.getElementById('searchButton');
+
+searchButton.addEventListener('click', event => {
+const searchInput = document.querySelector('.search_input');
+const query = searchInput.value;
+searchPlants(query);
+});
+        
+    </script>
+  </body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/png" href="images/leaf.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bloom</title>
+    <link rel="stylesheet" href="overview.css">
+  </head>
+  
+  <body>
+    <div class="search_container">
+      <div class="logo">
+         <a href="index.html">Bloom<img src="https://i.imgur.com/SpeM9nH.png"></a>
+       </div>
+       <div class="menu">
+
+        </div> 
+      <form action="" class="search_bar">
+        <input class="search_input" type="text" placeholder="Search">
+        <button class="search_button" type="submit"><img src="images/search.png"></button>
+      </form>
+    </div>
+    
+    <div class="banner" >
+      <div class="banner-text" id="bannerText"></div>
+    </div>
+
+    <div class="plant-container">
+      <img alt="Plant Image" id="plantImg">
+      <div class="buttons-container">
+        <button id="overviewButton">Overview</button>
+        <button id="plantCareButton">Plant Care</button>
+        <button id="moreInfoButton">More Info</button>
+      </div>
+    </div>
+    
+    <div class="content">
+      <div class="plant-info">
+        <h2 id="starter"></h2>
+        <p id="line1"></p>
+        <p id="line2"></p>
+        <p id="line3"></p>
+        <p id="line4"></p>
+        <p id="line5"></p>
+      </div>
+    </div>
+    
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      console.log(id);
+
+      const bText = document.getElementById('bannerText');
+      const img = document.getElementById('plantImg');
+    
+      fetch(`https://perenual.com/api/species/details/${id}?key=sk-RV5d6436fd2dc031a499`)
+        .then(response => response.json())
+        .then(data => {
+
+          const t = document.createElement("h1");
+          t.textContent = data.common_name;
+          
+          bText.appendChild(t);
+
+          img.setAttribute('src', data.default_image.medium_url);
+            
+          console.log(data.id);
+          console.log(data.common_name);
+          console.log(data.scientific_name);
+          console.log(data.other_name);
+          console.log(data.default_image.medium_url);
+        })
+        .catch(error => console.error(error));
+
+      loadOverview();
+
+      function loadOverview(){
+        
+        const starter = document.getElementById('starter');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        const line4 = document.getElementById('line4');
+  
+        fetch(`https://perenual.com/api/species/details/${id}?key=sk-RV5d6436fd2dc031a499`)
+          .then(response => response.json())
+          .then(data => {
+            starter.textContent = data.common_name + " overview";
+            line1.textContent = "Type: " + data.type;
+  
+            const leafArray = data.leaf_color;
+            const leafString = leafArray.join(",");
+            
+            if(data.leaf===true)
+              line2.textContent = "Leaf Colour: " + leafString;
+            else
+              line2.textContent = "Has no leaves"
+  
+            const propagationArray = data.propagation;
+            const propagationString = propagationArray.join(", ");
+            
+            line3.textContent = "Propagation: " + propagationString;
+            
+            if(data.rare===true)
+              line4.textContent = "Rare: Yes ";
+            else
+              line4.textContent = "Rare: No ";
+          })
+          .catch(error => console.error(error));
+      }
+
+      function clearPlantInfo() {
+        const starter = document.getElementById('starter');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        const line4 = document.getElementById('line4');
+        const line5 = document.getElementById('line5');
+      
+        starter.textContent = "";
+        line1.textContent = "";
+        line2.textContent = "";
+        line3.textContent = "";
+        line4.textContent = "";
+        line5.textContent = "";
+      }
+
+      
+      const overviewBtn = document.getElementById('overviewButton');
+      overviewBtn.addEventListener('click', function() {
+
+        clearPlantInfo();
+        
+        const starter = document.getElementById('starter');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        const line4 = document.getElementById('line4');
+        const line5 = document.getElementById('line5');
+        
+        fetch(`https://perenual.com/api/species/details/${id}?key=sk-RV5d6436fd2dc031a499`)
+        .then(response => response.json())
+        .then(data => {
+          starter.textContent = data.common_name + " overview";
+          line1.textContent = "Type: " + data.type;
+
+          const leafArray = data.leaf_color;
+          const leafString = leafArray.join(",");
+
+          if(data.leaf===true)
+            line2.textContent = "Leaf Colour: " + leafString;
+          else
+            line2.textContent = "Has no leaves"
+            
+
+          const propagationArray = data.propagation;
+          const propagationString = propagationArray.join(", ");
+          
+          line3.textContent = "Propagation: " + propagationString;
+          
+          if(data.rare===true)
+            line4.textContent = "Rare: Yes ";
+          else
+            line4.textContent = "Rare: No ";
+
+          line5.textContent="";
+          
+        })
+        .catch(error => console.error(error));
+      });
+      
+      const plantCareBtn = document.getElementById('plantCareButton');
+      plantCareBtn.addEventListener('click', function() {
+
+        clearPlantInfo();
+        
+        const starter = document.getElementById('starter');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        const line4 = document.getElementById('line4');
+        const line5 = document.getElementById('line5');
+        
+        fetch(`https://perenual.com/api/species/details/${id}?key=sk-RV5d6436fd2dc031a499`)
+        .then(response => response.json())
+        .then(data => {
+          starter.textContent = data.common_name + " plant care";
+          line2.textContent = "Watering: " + data.watering;
+        
+          const sunlightArray = data.sunlight;
+          const sunlightString = sunlightArray.join(",");
+          
+          line1.textContent = "Sunlight: "+sunlightArray;
+
+          const soilArray = data.soil;
+          const soilString = soilArray.join(",");
+
+          if(data.care_level!="null")
+            line3.textContent = "Care Level: No care needed";
+          else
+            line3.textContent = "Care Level: " + data.care_level;
+          
+          line4.textContent = "Growth Rate: "+data.growth_rate;
+
+          if(data.maintenance===null)
+            line5.textContent = "Maintenance: No maintenance needed";
+          else
+            line5.textContent = "Maintenance: "+data.maintenance;
+          
+        })
+        .catch(error => console.error(error));
+        
+      });
+
+      const moreInfoBtn = document.getElementById('moreInfoButton');
+      moreInfoButton.addEventListener('click', function() {
+
+        clearPlantInfo();
+        
+        const starter = document.getElementById('starter');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        const line4 = document.getElementById('line4');
+        const line5 = document.getElementById('line5');
+        
+        fetch(`https://perenual.com/api/species/details/${id}?key=sk-RV5d6436fd2dc031a499`)
+        .then(response => response.json())
+        .then(data => {
+          starter.textContent = data.common_name + " more info";
+
+          const scientificArray = data.scientific_name;
+          const scientificString = scientificArray.join(",");
+          
+          line1.textContent = "Scientific Name: " + scientificString;
+          
+          line2.textContent = "Cycle: "+data.cycle;
+
+          if(data.family==="" || data.family===null)
+            line3.textContent = "No plant family";
+          else
+            line3.textContent = "Plant family: "+data.family;
+
+          const animalArray = data.attracts;
+          const animalString = animalArray.join(",");
+
+          if(animalString==="")
+            line4.textContent = "No animals attracted";
+          else
+            line4.textContent = "Animals attracted: "+ animalString;
+
+          if(data.medicinal)
+            line5.textContent = "Medicinal: Yes";
+          else
+            line5.textContent = "Medicinal: No";
+          
+        })
+        .catch(error => console.error(error));
+        
+      });
+      
+    </script>
+  </body>
+
+  <footer>
+      <div class="info">
+        <a href="about.html">Abouts Us</a>
+      </div>
+  </footer>
+</html>
